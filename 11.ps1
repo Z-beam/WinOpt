@@ -710,9 +710,9 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies
 	
     "fhsvc"                                        #Вимкнути службу історії факсів. Давно не зустрічав факсів. Можна вимикати разом із попередньою службою.
 	
-    "gupdate"                                      #вимкнути оновлення всіх застосунків від Google (не рекомендується, якщо активно користуєшся сервісами від Google)
+    #"gupdate"                                      #вимкнути оновлення всіх застосунків від Google (не рекомендується, якщо активно користуєшся сервісами від Google)
 	
-    "gupdatem"                                     #Вимкнути ще один сервіс оновлення Google
+    #"gupdatem"                                     #Вимкнути ще один сервіс оновлення Google
 	
     #"stisvc"                                       #Вимикає Windows Image Acquisition (WIA), це сервіс, що впливає на взаємодію зі сканером чи камерою (будь-яким пристроєм), що передають зображення у Windows напряму. Якщо таких пристроїв немає, сервіс можна вимкнути.
 	
@@ -1096,7 +1096,7 @@ $checkpointDescription = "Щотижнева точка відновлення"
 # Створити дію
 $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-ExecutionPolicy Bypass -Command `"Checkpoint-Computer -Description '$checkpointDescription' -RestorePointType 'MODIFY_SETTINGS'`""
 
-# Створити тригер (кожної неділі об 11:11)
+# Створити тригер (щонеділі об 11:11)
 $trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Sunday -At $triggerTime
 
 # Опціонально: Вказати параметри користувача та пароля
