@@ -86,13 +86,6 @@ Write-Host -ForegroundColor DarkMagenta "Enable .NET Framework"
 Enable-WindowsOptionalFeature -Online -FeatureName NetFx3 -All
 #>
 
-#Вимкнення LLMNR. 
-#Це протокол, який дозволяє комп'ютерам у локальній мережі знаходити один одного і розв'язувати імена хостів без використання DNS-сервера.LLMNR є корисним протоколом для спрощення налаштування локальних мереж, але його використання може бути обмежене через потенційні ризики безпеки.
-#Якщо не передаєте дані всередині локальної мережі, то для безпеки протокол краще вимкнути.
-Write-Host -ForegroundColor DarkMagenta "Вимкнення LLMNR"
-REG ADD  “HKLM\Software\policies\Microsoft\Windows NT\DNSClient”
-REG ADD  “HKLM\Software\policies\Microsoft\Windows NT\DNSClient” /v ” EnableMulticast” /t REG_DWORD /d “0” /f
-
 #Вимкнення NBT-NS
 #NBT-NS є старою, але все ще корисною технологією для розв'язання імен у локальних мережах, особливо для забезпечення сумісності з застарілими системами. 
 #Якщо у вашій мережі немає застарілих систем, то задля безпеки NBT-NS краще вимкнути. 
@@ -142,6 +135,7 @@ REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v NoDi
 Write-Host -ForegroundColor DarkMagenta "Вмикаємо запуск всього одночасно при вході користувача"
 REG ADD "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize" /V "Startupdelayinmsec" /T REG_DWORD /D 0 /F
 
+#######Chocolatey###########
 Write-Host -ForegroundColor DarkMagenta "Встановлюємо Chocolatey для автоматизації встановлення простих застосунків"
 #Встановлюємо Chocolatey та інші застосунки
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
@@ -508,14 +502,14 @@ $configText | Out-File -FilePath $configFilePath -Encoding UTF8
     
 	# Цю частину лишаю закоментованою (значить ця частина скрипта не працюватиме), бо вона ВИмикає відслідковування локації ПК. Дуже потрібна штука в мапах тощо. Також закоментував скрипт, що вимикає звітування про помилки Windows. Код залишаю, якщо комусь треба це вимикати
 	<#
-    Write-Host  -ForegroundColor DarkMagenta "Disabling Location Tracking..."
+    Write-Host  -ForegroundColor DarkMagenta "Вимикаємо відстежування локації.."
     If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location")) {
         New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" -Force | Out-Null
     }
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" -Name "Value" -Type String -Value "Deny"
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" -Name "SensorPermissionState" -Type DWord -Value 0
     Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration" -Name "Status" -Type DWord -Value 0
-    Write-Host  -ForegroundColor DarkMagenta "Disabling automatic Maps updates..."
+    Write-Host  -ForegroundColor DarkMagenta "Вимикаємо автоматичні оновлення мап..."
     Set-ItemProperty -Path "HKLM:\SYSTEM\Maps" -Name "AutoUpdateEnabled" -Type DWord -Value 0
     Write-Host  -ForegroundColor DarkMagenta "Disabling Feedback..."
     If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules")) {
@@ -585,15 +579,10 @@ If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Operat
     New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\OperationStatusManager" | Out-Null
 }
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\OperationStatusManager" -Name "EnthusiastMode" -Type DWord -Value 1
+
 # Приховування кнопки Task View
 Write-Host -ForegroundColor DarkMagenta "Приховуємо кнопку TaskView..."
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Type DWord -Value 0
-# Встановлення диспетчера завдань поверх усіх вікон
-Write-Host -ForegroundColor DarkMagenta "Робимо диспетчер завдань завджи зверху всіх вікон..."
-If (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager")) {
-    New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" | Out-Null
-}
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "AlwaysOnTop" -Type DWord -Value 1
 #Приховуємо значок Люди з панелі завдань
     Write-Host  -ForegroundColor DarkMagenta "Приховуємо значок Люди якщо він є..."
     If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People")) {
@@ -807,7 +796,7 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies
     #"vmicrdv"
     #"vmictimesync" 
 	
-    # Цей сервіс просто не чіпай ніколи. Цей сервіс допомагає забезпечити безпеку системи, аналізуючи мережевий трафік та виявляючи потенційно небезпечні дії. Може миттєво перетворити твою систему в картоплину.
+    # Цей сервіс просто не чіпай ніколи. Він допомагає забезпечити безпеку системи, аналізуючи мережевий трафік та виявляючи потенційно небезпечні дії. Може миттєво перетворити твою систему в картоплину.
     #"WdNisSvc"
 )
 
