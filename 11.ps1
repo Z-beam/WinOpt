@@ -114,17 +114,6 @@ net accounts /lockoutthreshold:5
 net accounts /lockoutduration:30
 #Встановлюємо час через який можна буде вводити пароль знову в хв.
 net accounts /lockoutwindow:30
-#Вмикаємо Screensaver для того, щоб унеможливити його підміну для виконання шкідливого коду. Досить розповсюджений метод зараження ПК
-Write-Host -ForegroundColor DarkMagenta "`n Вмикаємо Screensaver `n Час на спрацювання Screensaver 15 хвилин `n Встановлюємо стандартний підставний Screensaver `n Встановлюємо захист за зміну Screensaver паролем `n Більше ніщо не зможе змінити Screensaver"
-REG DEL "HKLM\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop" /v ScreenSaveActive /f
-#Таймер на активацію скрінсейвера 900 секунд (15 хв)
-reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop" /v ScreenSaveTimeOut /t REG_SZ /d 900 /f
-#Встановлюємо специфічний Screensaver scrnsave.scr
-reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop" /v SCRNSAVE.EXE /t REG_SZ /d C:\Windows\system32\scrnsave.scr /f
-#Вмикаємо захист паролем на зміну ScreenSaver
-REG ADD "HKLM:\Software\Policies\Microsoft\Windows\Control Panel\Desktop" /v ScreenSaverIsSecure /t REG_SZ /d 1 /f
-#Запобігаємо підміні Screensaver на будь-який інший
-REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v NoDispScrSavPage \t REG_DWORD /d 1 /f
 
 ##########Прості доповнення##########
 
