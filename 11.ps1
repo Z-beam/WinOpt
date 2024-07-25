@@ -54,11 +54,6 @@ bcdedit /set "{current}" bootmenupolicy legacy
 Write-Host -ForegroundColor DarkMagenta "Виставляємо ліміт для точок відновлення у 5%"
 vssadmin resize shadowstorage /for=C: /on=C: /maxsize=5%
 
-#Вмикаємо overprovisioning для збільшення терміну життя SSD
-Write-Host -ForegroundColor DarkMagenta "Вмикаємо OverProvisioning через TRIM"
-fsutil behavior set DisableDeleteNotify 0
-
-
 # Вмикаємо відновлення системи на C:\
 Write-Host -ForegroundColor DarkMagenta "Вмикаємо відновлення системи на C:\"
 Enable-ComputerRestore -Drive "$env:SystemDrive"
@@ -171,6 +166,8 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 	
 #Встановлюємо правильний блокнот Notepad++
 	choco install notepadplusplus.install -y
+	
+	choco install zoom -y
 	
 # Встановлення Mova прямо у автозавантаження
 $exeUrl = "https://github.com/Z-beam/MovaFlag/releases/download/1.0.0/Mova.exe"
@@ -1092,7 +1089,7 @@ Write-Host  -ForegroundColor DarkMagenta "Завдання '$taskName' було 
 # Створюємо завдання для автоматичного запуску SuperF4
 $taskName = "SuperF4"
 $taskDescription = "Автоматично запускає SuperF4"
-$programPath = "%APPDATA%\SuperF4\SuperF4.exe"
+$programPath = "$env:APPDATA\SuperF4\SuperF4.exe"
 
 # Створити дію
 $action = New-ScheduledTaskAction -Execute $programPath
@@ -1113,7 +1110,6 @@ $task = New-ScheduledTask -Action $action -Trigger $trigger -Principal $principa
 Register-ScheduledTask -TaskName $taskName -InputObject $task
 
 Write-Host  -ForegroundColor DarkMagenta "Завдання '$taskName' було успішно створено."
-
 
 
 #Зупиняємо створення логу скрипта.
