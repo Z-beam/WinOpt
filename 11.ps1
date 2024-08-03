@@ -170,7 +170,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 	choco install zoom -y
 	
 # Встановлення Mova прямо у автозавантаження
-$exeUrl = "https://github.com/Z-beam/MovaFlag/releases/download/1.0.0/Mova.exe"
+$exeUrl = "https://github.com/Z-beam/MovaFlag/releases/download/1.0.1/Mova.exe"
 $downloadPath = "$env:USERPROFILE\Mova\Mova.exe"
 
 # Створення директорії для збереження файлу, якщо її ще не існує
