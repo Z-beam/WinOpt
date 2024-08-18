@@ -1098,7 +1098,7 @@ $action = New-ScheduledTaskAction -Execute $programPath
 $trigger = New-ScheduledTaskTrigger -AtLogOn
 
 # Створити принципала для завдання без зберігання пароля
-$principal = New-ScheduledTaskPrincipal -UserId "NT AUTHORITY\SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+$principal = New-ScheduledTaskPrincipal -UserId $env:UserName -LogonType Interactive -RunLevel Highest
 
 # Створити налаштування для завдання
 $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -DisallowHardTerminate
@@ -1106,11 +1106,10 @@ $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoi
 # Створити завдання
 $task = New-ScheduledTask -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Description $taskDescription
 
-# Зареєструвати завдання з опцією 'run whether user is logged on or not'
-Register-ScheduledTask -TaskName $taskName -InputObject $task
+# Зареєструвати завдання з опцією 'run only when user is logged on'
+Register-ScheduledTask -TaskName $taskName -InputObject $task -User $env:UserName -RunLevel Highest
 
 Write-Host  -ForegroundColor DarkMagenta "Завдання '$taskName' було успішно створено."
-
 
 #Зупиняємо створення логу скрипта.
 Stop-Transcript
