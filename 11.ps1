@@ -31,7 +31,7 @@ Write-Host -ForegroundColor Yellow "
                                          
 "
 
-# Створення LOG-файлу для зневадження
+#Створення LOG-файлу для зневадження
 Start-Transcript -Append C:\Support\Logs\WindowsSetupLog.txt
 
 #ініціюємо змінні для роботи скрипта
@@ -54,7 +54,7 @@ bcdedit /set "{current}" bootmenupolicy legacy
 Write-Host -ForegroundColor DarkMagenta "Виставляємо ліміт для точок відновлення у 5%"
 vssadmin resize shadowstorage /for=C: /on=C: /maxsize=5%
 
-# Вмикаємо відновлення системи на C:\
+#Вмикаємо відновлення системи на C:\
 Write-Host -ForegroundColor DarkMagenta "Вмикаємо відновлення системи на C:\"
 Enable-ComputerRestore -Drive "$env:SystemDrive"
 
@@ -131,8 +131,9 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 #Встановлюємо браузер Firefox
     choco install firefox -y
 
-#Встановлюємо браузер Chrome
+<#Встановлюємо браузер Chrome
     choco install googlechrome -y --ignore-checksums
+#>
 
 #Встановлюємо читач PDF Okular
     choco install okular -y
@@ -166,8 +167,10 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 	
 #Встановлюємо правильний блокнот Notepad++
 	choco install notepadplusplus.install -y
-	
+
+<#Встановлюємо Zoom
 	choco install zoom -y
+#>
 	
 # Встановлення Mova прямо у автозавантаження
 $exeUrl = "https://github.com/Z-beam/MovaFlag/releases/download/1.0.2/Mova.exe"
@@ -549,13 +552,14 @@ $configText | Out-File -FilePath $configFilePath -Encoding UTF8
     Write-Host  -ForegroundColor DarkMagenta "Вимикаємо Remote Assistance..."
     Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Remote Assistance" -Name "fAllowToGetHelp" -Type DWord -Value 0
 
-#Гібернація — це енергозберігаючий стан, який дозволяє зберігати стан комп'ютера на жорсткому диску, а потім повністю вимикати систему. На стаціонарному ПК не бачу в цьому ніякого сенсу. Для ноутбуків же краще видалити (або занотувати) рядки, що вимикають гібернацію, бо там ця функція стане у пригоді.
+<#Гібернація — це енергозберігаючий стан, який дозволяє зберігати стан комп'ютера на жорсткому диску, а потім повністю вимикати систему. На стаціонарному ПК не бачу в цьому ніякого сенсу. Для ноутбуків же краще видалити (або занотувати) рядки, що вимикають гібернацію, бо там ця функція стане у пригоді.
     Write-Host  -ForegroundColor DarkMagenta "Вимкнення Hibernation..."
     Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Session Manager\Power" -Name "HibernateEnabled" -Type Dword -Value 0
     If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings")) {
         New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" | Out-Null
     }
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowHibernateOption" -Type Dword -Value 0
+#>
 
 # Налаштування диспетчера завдань
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -Type Binary -Value $preferences.Preferences
@@ -667,19 +671,19 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies
     "WSearch"                                      # Windows Search. Служба, що відповідає за індексування та пошук в системі Windows. Працює хиленько, можна вимкнути та використовувати пошуковик по типу Everything
 	
 	#Служби Xbox необхідні для роботи ігор від Microsoft та деяких інших ігор. Якщо не граєте в ігри, то можна вимкнути наступні 5 сервісів.
-    #"XblAuthManager"                               # Xbox Live Auth Manager
-    #"XblGameSave"                                  # Xbox Live Game Save Service
-    #"XboxNetApiSvc"                                # Xbox Live Networking Service
-    #"XboxGipSvc"                                   # Xbox Accessory Management Service
-	#"CaptureService_48486de"                       #Служба, що потрібна для роботи Windows.Graphics.Capture API, який є частиною Xbox GameBar.  
+    "XblAuthManager"                               # Xbox Live Auth Manager
+    "XblGameSave"                                  # Xbox Live Game Save Service
+    "XboxNetApiSvc"                                # Xbox Live Networking Service
+    "XboxGipSvc"                                   # Xbox Accessory Management Service
+    "CaptureService_48486de"                       #Служба, що потрібна для роботи Windows.Graphics.Capture API, який є частиною Xbox GameBar.  
 	
-	"BcastDVRUserService_48486de"					#використовується для забезпечення функцій трансляції та запису ігрового процесу. Це корисно для геймерів, які хочуть транслювати свої ігри на платформах для стримінгу або записувати їх для подальшого перегляду і редагування. Є сенс вимикати, якщо користуєтесь сторонніми засобами.
+    "BcastDVRUserService_48486de"		   #використовується для забезпечення функцій трансляції та запису ігрового процесу. Це корисно для геймерів, які хочуть транслювати свої ігри на платформах для стримінгу або записувати їх для подальшого перегляду і редагування. Є сенс вимикати, якщо користуєтесь сторонніми засобами.
 	
-    #"ndu"                                          # Windows Network Data Usage Monitor є важливим компонентом для моніторингу та управління мережевим трафіком в операційній системі Windows. Він дозволяє користувачам і адміністраторам контролювати, як програми використовують мережу і забезпечувати ефективне використання доступного інтернет-трафіку. Якщо слідкувати за тим скільки витрачено трафіку у мережі не потрібно, сервіс можна вимкнути.
+    #"ndu"                                         # Windows Network Data Usage Monitor є важливим компонентом для моніторингу та управління мережевим трафіком в операційній системі Windows. Він дозволяє користувачам і адміністраторам контролювати, як програми використовують мережу і забезпечувати ефективне використання доступного інтернет-трафіку. Якщо слідкувати за тим скільки витрачено трафіку у мережі не потрібно, сервіс можна вимкнути.
 	
     #"WerSvc"                                      #Відповідає за звітування про помилки. Ось це, я вважаю, можна і залишити. Про помилки в системі Microsoft варто знати.
 	
-    #"Spooler"                                      #Вимикає всі твої принтери. Якщо принтерів нема й не буде, то службу принтерів можна вимикати.
+    "Spooler"                                     #Вимикає всі твої принтери. Якщо принтерів нема й не буде, то службу принтерів можна вимикати.
 	
     "Fax"                                          #Вимкнути факс. Якщо ти навіть не знаєш, що таке факс, то навряд тобі ця служба стане у пригоді. Можна точно вимикати.
 	
@@ -697,23 +701,23 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies
 	
     #"WpcMonSvc"                                    #Служба батьківського контролю на ПК. Якщо не використовуєте батьківський контроль для дітей, то і служба вам не потрібна.
 	
-    #"PhoneSvc"                                     #Вимикаючи Phone Service ви вимкнете можливості телефонії та пересилання SMS на комп'ютері за допомогою підключених пристоїв (саме через мобільні мережі). Якщо ви не телефонуєте з комп'ютера через мобільні мережі, службу можна вимкнути.
+    "PhoneSvc"                                     #Вимикаючи Phone Service ви вимкнете можливості телефонії та пересилання SMS на комп'ютері за допомогою підключених пристоїв (саме через мобільні мережі). Якщо ви не телефонуєте з комп'ютера через мобільні мережі, службу можна вимкнути.
 	
-    #"PrintNotify"                                  #служба Windows, яка відповідає за оповіщення користувачів про стан друку. Вона забезпечує функціональність повідомлень про друк, таких як спливаючі повідомлення про завдання друку, стан друку, помилки тощо. Якщо не користуєшся принтером, то і службу можна вимкнути.
+    "PrintNotify"                                  #служба Windows, яка відповідає за оповіщення користувачів про стан друку. Вона забезпечує функціональність повідомлень про друк, таких як спливаючі повідомлення про завдання друку, стан друку, помилки тощо. Якщо не користуєшся принтером, то і службу можна вимкнути.
 	
-    #"PcaSvc"                                       #служба, яка допомагає користувачам запускати старі програми, що можуть мати проблеми з сумісністю на новіших версіях операційної системи Windows. Якщо не користуєшся застарілими програмами, службу можна вимкнути.
+    "PcaSvc"                                       #служба, яка допомагає користувачам запускати старі програми, що можуть мати проблеми з сумісністю на новіших версіях операційної системи Windows. Якщо не користуєшся застарілими програмами, службу можна вимкнути.
 	
     #"WPDBusEnum"                                   #служба, яка керує підключенням і взаємодією з портативними пристроями, такими як цифрові камери, медіаплеєри, смартфони та інші пристрої, що використовують протокол MTP (Media Transfer Protocol) або PTP (Picture Transfer Protocol). Якщо підключаєш до ПК смартфон чи фотоапарат, служба має працювати. 
 	
     #"LicenseManager"                               #вимкнення LicenseManager зламає роботу магазина Windows. Якщо магазин Windows тебе не цікавить - можна вимикати.
 	
-    #"seclogon"                                     #Вимикає інші облікові записи та повторний вхід. Якщо плануєш мати лише один обліковий запис на ПК, службу можна вимкнути.
+    "seclogon"                                     #Вимикає інші облікові записи та повторний вхід. Якщо плануєш мати лише один обліковий запис на ПК, службу можна вимкнути.
 	
     #"SysMain"                                      #Найдивніший вчинок, який можна зробити - це вимкнути Sysmain, він же SuperFetch, що кешує файли та застосунки для прискорення системи. Єдиний сценарій, де можна вимкнути, це коли 4 та менше Гб ОЗП та система стоїть на HDD. 
 	
-    #"lmhosts"                                      #Вимикаємо помічника для застарілої технології TCP/IP NetBIOS. Якщо у вашій мережі немає пристроїв на старих версіях ОС (нижче Windows 10), то службу можна і треба вимикати заради безпеки. 
+    "lmhosts"                                      #Вимикаємо помічника для застарілої технології TCP/IP NetBIOS. Якщо у вашій мережі немає пристроїв на старих версіях ОС (нижче Windows 10), то службу можна і треба вимикати заради безпеки. 
 	
-    #"wisvc"                                        #Вимикає Windows Insider program. Програма тестування нових версій Windows до їх релізу не буде доступна. 
+    "wisvc"                                        #Вимикає Windows Insider program. Програма тестування нових версій Windows до їх релізу не буде доступна. 
 	
     #"FontCache"                                    #(Windows Font Cache Service)є важливою частиною системи Windows для забезпечення ефективності використання шрифтів у різноманітних програмах і інтерфейсі системи. Вона сприяє збереженню ресурсів комп'ютера та покращує загальну продуктивність шляхом оптимізації роботи з шрифтами.Нуль сенсу вимикати.
 	
@@ -739,9 +743,9 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies
     #"iphlpsvc"                                      #Вимкнути ipv6. Хоч більшість мереж працюють на базі протоколу ipv4, вимкнення цієї служби ніяк не вплине на безпеку чи продуктивність. Нехай собі буде увімкнена.     
 	
 	#Три сервіси оновлення Edge. Якщо не користуєтесь Edge, є сенс вимкнути.
-    #"edgeupdate"                                    
-    #"MicrosoftEdgeElevationService"                 
-   # "edgeupdatem"                                   
+    "edgeupdate"                                    
+    "MicrosoftEdgeElevationService"                 
+    "edgeupdatem"                                   
 	
     "SEMgrSvc"                                      #Сервіс підтримки NFC та платежів через NFC. Якщо на ПК немає NFC, можна вимикати.
 	
@@ -766,21 +770,21 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies
     #"QWAVE"                                         #сервіс Quality Windows Audio Video Experience допомагає покращити якість потокового мультимедіа, знижуючи затримки і втрати пакетів, і оптимізуючи використання мережевих ресурсів.Немає сенсу вимикати.
 	
      #Сервіси від HP. Якщо не користуєшся ними на ПК від HP, можна вимикати.
-    #"HPAppHelperCap"
-    #"HPDiagsCap"
-    #"HPNetworkCap"
-    #"HPSysInfoCap"
-    #"HpTouchpointAnalyticsService"
+    "HPAppHelperCap"
+    "HPDiagsCap"
+    "HPNetworkCap"
+    "HPSysInfoCap"
+    "HpTouchpointAnalyticsService"
     
 	#Сервіси віртуалізації hyper-v. Потрібні для адекватної роботи віртуальних машин. Якщо не користуєшся віртуальними машинами, можна вимкнути, це трошки (зовсім) додасть швидкодії.
-    # "HvHost"                          
-    #"vmickvpexchange"
-    #"vmicguestinterface"
-    #"vmicshutdown"
-    #"vmicheartbeat"
-    #"vmicvmsession"
-    #"vmicrdv"
-    #"vmictimesync" 
+    "HvHost"                          
+    "vmickvpexchange"
+    "vmicguestinterface"
+    "vmicshutdown"
+    "vmicheartbeat"
+    "vmicvmsession"
+    "vmicrdv"
+    "vmictimesync" 
 	
     # Цей сервіс просто не чіпай ніколи. Він допомагає забезпечити безпеку системи, аналізуючи мережевий трафік та виявляючи потенційно небезпечні дії. Може миттєво перетворити твою систему в картоплину.
     #"WdNisSvc"
@@ -937,7 +941,7 @@ $Bloatware = @(
     "Facebook.Instagram*"       # Instagram / Beta
     "*Twitter*"                 # Twitter
     "*Viber*"
-	"Clipchamp.Clipchamp"				     # Clipchamp – Video Editor
+    "Clipchamp.Clipchamp"		     # Clipchamp – Video Editor
     "Microsoft.OutlookForWindows"            # Microsoft Outlook
     "MicrosoftTeams"                         # Microsoft Teams
     "MicrosoftWindows.Client.WebExperience"  # Taskbar Widgets
@@ -1037,7 +1041,7 @@ $Bloatware = @(
     Write-Host  -ForegroundColor DarkMagenta "Завершуємо видаляти сміттєві застосунки"
     $ResultText.text = "`r`n" +"`r`n" + "Видалення сміттєвих застосунків завершено."
 
-#Покращуємо Windows Update
+<#Покращуємо Windows Update
  Write-Host  -ForegroundColor DarkMagenta "Вимикаємо постачання драйверів через Windows Update..."
     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Device Metadata")) {
         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Device Metadata" -Force | Out-Null
@@ -1061,6 +1065,7 @@ $Bloatware = @(
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUPowerManagement" -Type DWord -Value 0
     Write-Host  -ForegroundColor DarkMagenta "Постачання драйверів через Windows Update вимкнено"
     $ResultText.text = "`r`n" +"`r`n" + "Виставляємо Windows Update на Дружні налаштування"
+#>
 
 # Створюємо завдання на щотижневу точку відновлення
 $taskName = "Щотижнева точка відновлення"
